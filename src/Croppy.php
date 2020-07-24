@@ -43,9 +43,9 @@ class Croppy {
 	 * @param bool $crop
 	 * @return bool
 	 */
-	public function cropscale($width, $height, $crop = false) {
+	public function cropresize($width, $height, $crop = false) {
 		$this->checkImageSource();
-		// $this->image
+		$this->createImage();
 
 		return true;
 	}
@@ -58,7 +58,8 @@ class Croppy {
 	 * @param bool $crop
 	 * @return bool
 	 */
-	public function scale($width, $height, $crop = false) {
+	public function resize($width, $height, $crop = false) {
+
 
 		return true;
 	}
@@ -77,8 +78,13 @@ class Croppy {
 	}
 
 
-	public function save($destinationPath) {
+	private function createImage() {
+		$this->image = imagecreatefromjpeg($this->sourcePath);
+	}
 
+
+	public function save($destinationPath) {
+		imagejpeg($this->image, $destinationPath);
 
 		return true;
 	}
