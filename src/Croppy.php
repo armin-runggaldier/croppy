@@ -37,6 +37,15 @@ class Croppy {
 
 
 	/**
+	 * Return path of input source
+	 * @return string
+	 */
+	public function getSourcePath() : string {
+		return $this->sourcePath;
+	}
+
+
+	/**
 	 * Resize image and crop if requestet
 	 * @param float $width
 	 * @param float $height
@@ -45,8 +54,21 @@ class Croppy {
 	 */
 	public function cropresize($width, $height, $crop = false) {
 		$this->checkImageSource();
-		$this->createImage();
 
+		$imageDimensions = getimagesize($this->sourcePath);
+		$image = $this->createImageFromSource();
+
+		$newImage = imagecreatetruecolor($width, $height);
+
+		//TRANSPARENT BACKGROUND
+		/*$color = imagecolorallocatealpha($newImage, 0, 0, 0, 127); //fill transparent back
+		imagefill($newImage, 0, 0, $color);
+		imagesavealpha($newImage, true);*/
+
+		// image resample
+		imagecopyresampled($newImage, $image, 0, 0, 0, 0, $width, $height, $imageDimensions[0], $imageDimensions[1]);
+
+		$this->image = $newImage;
 		return true;
 	}
 
@@ -78,15 +100,31 @@ class Croppy {
 	}
 
 
-	private function createImage() {
-		$this->image = imagecreatefromjpeg($this->sourcePath);
+	private function createImageFromSource() {
+		$image = imagecreatefromjpeg($this->sourcePath);
+		return $image;
 	}
 
 
 	public function save($destinationPath) {
-		imagejpeg($this->image, $destinationPath);
+		$dirname = dirname($destinationPath);
+		if(is_writable($dirname) === false) {
+			throw new Exception(sprintf('Directory %s is not writable!', $dirname));
+		}
 
-		return true;
+		$result = imagejpeg($this->image, $destinationPath);
+		return $result;
+	}
+
+	public function output() {
+		// Set the content type header - in this case image/jpeg
+		header('Content-Type: image/jpeg');
+
+		// Output the image
+		imagejpeg($this->image);
+
+		// Free up memory
+		imagedestroy($this->image);
 	}
 
 
@@ -110,6 +148,8 @@ class Croppy {
 	private function checkImageSource()  {
 		if(isset($this->sourcePath) === false || empty($this->sourcePath) === true) {
 			throw new Exception('Source file was not set. Please use $obj->setSourcePath() first!');
+		} else if(is_file($this->sourcePath) === false) {
+			throw new Exception(sprintf('File %s not found!', $this->sourcePath));
 		} else {
 			return true;
 		}
