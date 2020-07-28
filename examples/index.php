@@ -7,7 +7,7 @@ require '../src/Exception.php';
 
 use Croppy\Croppy;
 
-//unlink(__DIR__.'/output/image1.jpg');
+//unlink(__DIR__.'/output/testoutput.jpg');
 
 $croppy = new Croppy();
 $croppy->setSourcePath(__DIR__.'/images/image1.jpg');
