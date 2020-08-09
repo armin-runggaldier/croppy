@@ -12,6 +12,7 @@ class Croppy {
 	public const CROPSTART = 'start';
 	public const CROPCENTER = 'center';
 	public const CROPEND = 'end';
+	public const OPACITYMAX = 127;
 
 	private $availableTypes = [IMAGETYPE_JPEG, IMAGETYPE_PNG, IMAGETYPE_GIF, IMAGETYPE_BMP, IMAGETYPE_WEBP];
 	private $availableMimeTypes = [
@@ -24,6 +25,8 @@ class Croppy {
 	private $sourcePath = null;
 	private $cropAlignmentX = self::CROPCENTER;
 	private $cropAlignmentY = self::CROPCENTER;
+	private $backgroundColor = array(255, 255, 255);
+	private $backgroundOpacity = 127; // percent
 
 	private $image = null;
 
@@ -39,10 +42,12 @@ class Croppy {
 	 */
 	public function setSourcePath($sourcePath) : void {
 		$this->sourcePath = $sourcePath;
+		$this->checkImageSource();
+
 		$this->sourceType = exif_imagetype($this->sourcePath);
 
 		if($this->checkImageExtension() === false) {
-			throw new Exception(sprintf('Filetype %s is currently not supported. Supported types: %s!', $this->sourceType, $this->availableTypes));
+			throw new Exception(sprintf('Filetype %s is currently not supported. Supported types: %s!', $this->sourceType, implode(', ', $this->availableMimeTypes)));
 		}
 	}
 
@@ -93,17 +98,23 @@ class Croppy {
 			$newImage = imagecreatetruecolor($width, $height);
 		}
 
-		// TRANSPARENT BACKGROUND
-		/*$color = imagecolorallocatealpha($newImage, 0, 0, 0, 127); //fill transparent back
-		imagefill($newImage, 0, 0, $color);
-		imagesavealpha($newImage, true);*/
+		// set transparent background
+		$newImage = $this->setImageBackground($newImage);
 
 		// image resample
 		if($crop === true) {
 			$resizedImage = imagecreatetruecolor($width, $height);
+
+			$resizedImage = $this->setImageBackground($resizedImage);
+			$color = imagecolorallocatealpha($resizedImage, $this->backgroundColor[0], $this->backgroundColor[1], $this->backgroundColor[2], $this->backgroundOpacity);
+			imagefill($resizedImage, 0, 0, $color);
+
 			imagecopyresampled($resizedImage, $image, 0, 0, 0, 0, $width, $height, $sourceWidth, $sourceHeight);
 			imagecopyresampled($newImage, $resizedImage, 0, 0, $x, $y, $width, $height, $width, $height);
 		} else {
+			$color = imagecolorallocatealpha($newImage, $this->backgroundColor[0], $this->backgroundColor[1], $this->backgroundColor[2], $this->backgroundOpacity);
+			imagefill($newImage, 0, 0, $color);
+
 			imagecopyresampled($newImage, $image, 0, 0, $x, $y, $width, $height, $sourceWidth, $sourceHeight);
 		}
 
@@ -152,7 +163,7 @@ class Croppy {
 	 * @return bool
 	 * @throws Exception
 	 */
-	private function checkImageSource()  {
+	private function checkImageSource() {
 		if(isset($this->sourcePath) === false || empty($this->sourcePath) === true) {
 			throw new Exception('Source file was not set. Please use $obj->setSourcePath() first!');
 		} else if(is_file($this->sourcePath) === false) {
@@ -187,6 +198,42 @@ class Croppy {
 		else {
 			$image = false;
 		}
+
+		return $image;
+	}
+
+
+	/**
+	 * @param int $backgroundColorR R
+	 * @param int $backgroundColorB B
+	 * @param int $backgroundColorG G
+	 * @param int $opacity 0-100%
+	 * @return void
+	 * @throws Exception
+	 */
+	public function setBackground($backgroundColorR, $backgroundColorB, $backgroundColorG, $opacity = 100) {
+		$this->backgroundColor = array($backgroundColorR, $backgroundColorB, $backgroundColorG);
+		$this->backgroundOpacity = $this->calculateOpacity($opacity);
+	}
+
+
+	private function calculateOpacity($opacity) {
+		if($opacity < 0 || $opacity > 100) {
+			throw new Exception(sprintf('Opacity must be between 0 - 100! %s give in!', $opacity));
+		}
+
+		$opacity = 100 - $opacity; // invert
+
+		$realOpacity = $this::OPACITYMAX * $opacity / 100;
+
+		return $realOpacity;
+	}
+
+
+	private function setImageBackground($image) {
+		imagesavealpha($image, true);
+		$transparentImage = imagecolorallocatealpha($image, 0, 0, 0, 127);
+		imagefill($image, 0, 0, $transparentImage);
 
 		return $image;
 	}
