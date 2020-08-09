@@ -64,12 +64,12 @@ class Croppy {
 
 	/**
 	 * Resize image and crop if requestet
-	 * @param float $width
-	 * @param float $height
+	 * @param float $destinationWidth
+	 * @param float $destinationHeight
 	 * @param bool $crop
 	 * @return void
 	 */
-	public function resize($width, $height, $crop = false) {
+	public function resize($destinationWidth, $destinationHeight, $crop = false) {
 		$this->checkImageSource();
 
 		$sourceImageDimensions = getimagesize($this->sourcePath);
@@ -77,19 +77,21 @@ class Croppy {
 		$sourceHeight = $sourceImageDimensions[1];
 
 		// get new dimension size
-		list($width, $height) = $this->calculateDimensions($sourceWidth, $sourceHeight, $width, $height, $crop);
+		list($width, $height) = $this->calculateDimensions($sourceWidth, $sourceHeight, $destinationWidth, $destinationHeight, $crop);
 
 		// get crop position
 		$x = 0;
 		$y = 0;
 		if($crop === true) {
-			list($x, $y) = $this->calcuateCroPosition($sourceWidth, $sourceHeight, $width, $height);
+			list($x, $y) = $this->calcuateCroPosition($width, $height, $destinationWidth, $destinationHeight);
 		}
-		var_dump($x);
-		var_dump($y);
 
 		$image = $this->createImageFromSource();
-		$newImage = imagecreatetruecolor($width, $height);
+		if($crop === true) {
+			$newImage = imagecreatetruecolor($destinationWidth, $destinationHeight);
+		} else {
+			$newImage = imagecreatetruecolor($width, $height);
+		}
 
 		// TRANSPARENT BACKGROUND
 		/*$color = imagecolorallocatealpha($newImage, 0, 0, 0, 127); //fill transparent back
@@ -97,7 +99,13 @@ class Croppy {
 		imagesavealpha($newImage, true);*/
 
 		// image resample
-		imagecopyresampled($newImage, $image, $x, $y, 0, 0, $width, $height, $sourceWidth, $sourceHeight);
+		if($crop === true) {
+			$resizedImage = imagecreatetruecolor($width, $height);
+			imagecopyresampled($resizedImage, $image, 0, 0, 0, 0, $width, $height, $sourceWidth, $sourceHeight);
+			imagecopyresampled($newImage, $resizedImage, 0, 0, $x, $y, $width, $height, $width, $height);
+		} else {
+			imagecopyresampled($newImage, $image, 0, 0, $x, $y, $width, $height, $sourceWidth, $sourceHeight);
+		}
 
 		$this->image = $newImage;
 	}
@@ -282,7 +290,7 @@ class Croppy {
 		// recalculare width when crop
 		else if($newHeight < $height && $crop === true) {
 			$newHeight = $height;
-			// $newWidth = $sourceWidth * $height / $sourceHeight;
+			$newWidth = $sourceWidth * $height / $sourceHeight;
 		}
 
 		return array($newWidth, $newHeight);
@@ -311,8 +319,8 @@ class Croppy {
 			}
 		}
 
-		$x = $x * -1;
-		$y = $y * -1;
+		/*$x = $x * -1;
+		$y = $y * -1;*/
 
 		return array($x, $y);
 	}
