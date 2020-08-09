@@ -31,7 +31,6 @@ class Croppy {
 	private $image = null;
 
 	public function __construct() {
-
 	}
 
 
@@ -61,6 +60,11 @@ class Croppy {
 	}
 
 
+	/**
+	 * @param string $cropAlignmentX Croppy::CROPSTART | Croppy::CROPCENTER | Croppy::CROPEND
+	 * @param string $cropAlignmentY Croppy::CROPSTART | Croppy::CROPCENTER | Croppy::CROPEND
+	 * @return void
+	 */
 	public function setCropPosition($cropAlignmentX, $cropAlignmentY) {
 		$this->cropAlignmentX = $cropAlignmentX;
 		$this->cropAlignmentY = $cropAlignmentY;
@@ -73,6 +77,7 @@ class Croppy {
 	 * @param float $destinationHeight
 	 * @param bool $crop
 	 * @return void
+	 * @throws Exception
 	 */
 	public function resize($destinationWidth, $destinationHeight, $crop = false) {
 		$this->checkImageSource();
@@ -120,29 +125,6 @@ class Croppy {
 
 		$this->image = $newImage;
 	}
-
-
-	/**
-	 * Resize image and crop if requestet
-	 * @param float $width
-	 * @param float $height
-	 * @param bool $crop
-	 * @return bool
-	 */
-	/*public function cropresize($width, $height) {
-	}*/
-
-
-	/**
-	 * Resize image and crop if requestet
-	 * @param float $width
-	 * @param float $height
-	 * @param bool $crop
-	 * @return void
-	 */
-	/*public function crop($width, $height, $crop = false) {
-
-	}*/
 
 
 	/**

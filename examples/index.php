@@ -46,13 +46,26 @@ $croppy->resize(800, 600, true);
 $croppy->save(__DIR__.'/output/testoutput-vert3.jpg');
 
 /* transparent */
-
 $croppy = new Croppy();
 $croppy->setSourcePath(__DIR__.'/images/image1.png');
 $croppy->setCropPosition($croppy::CROPCENTER, $croppy::CROPCENTER);
-//$croppy->setBackground(255, 255, 255, 60);
+$croppy->setBackground(255, 255, 255, 60);
 $croppy->resize(800, 600, true);
 $croppy->save(__DIR__.'/output/testoutput.png');
+
+/* gif */
+$croppy = new Croppy();
+$croppy->setSourcePath(__DIR__.'/images/image1.gif');
+//$croppy->setBackground(255, 255, 255, 60);
+$croppy->resize(300, 600, true);
+$croppy->save(__DIR__.'/output/testoutput.gif');
+
+/* webp */
+$croppy = new Croppy();
+$croppy->setSourcePath(__DIR__.'/images/image1.webp');
+//$croppy->setBackground(255, 255, 255, 60);
+$croppy->resize(300, 600, true);
+$croppy->save(__DIR__.'/output/testoutput.webp');
 
 
 // echo $croppy->getSourcePath();
