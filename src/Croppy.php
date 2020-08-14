@@ -3,6 +3,7 @@
 /*
  * @author: Armin Runggaldier
  * @version: 1.0
+ * @github: https://github.com/Armamensch/croppy
  */
 
 namespace Croppy;
@@ -224,6 +225,7 @@ class Croppy {
 	/**
 	 * Save image on $destinationPath
 	 * @param $destinationPath
+	 * @param bool $convertType
 	 * @return bool
 	 * @throws Exception
 	 */
@@ -270,6 +272,7 @@ class Croppy {
 
 	/**
 	 * Stream image
+	 * @param bool $convertType
 	 * @return void
 	 */
 	public function output($convertType = false) {

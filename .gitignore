@@ -1,2 +1,4 @@
 .idea
+examples_local
 examples/output
+vendor

@@ -1,0 +1,22 @@
+{
+  "name": "croppy/croppy",
+  "description": "description",
+  "minimum-stability": "alpha",
+  "license": "MIT",
+  "authors": [
+	{
+	  "name": "Armin Runggaldier",
+	  "email": "armin.runggaldier@gmail.com"
+	}
+  ],
+  "require": {
+	"php": ">=5.6.0",
+	"ext-gd": "*",
+	"ext-exif": "*"
+  },
+  "autoload": {
+	"psr-4": {
+	  "Croppy\\Croppy\\": "src/"
+	}
+  }
+}
