@@ -68,7 +68,8 @@ echo $croppy->getSourcePath();
 ## Planned features for further releases:
 - image type conversion
 - image ratio resize
-if you are missing a feature, please create a pull request :)
+
+If you are missing a feature, please create a pull request :)
 
 <br>
 
