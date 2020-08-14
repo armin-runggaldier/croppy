@@ -6,7 +6,7 @@ Version: 1.0
 - image crop
 - supported formats: .jpeg, .jpg, .png, .gif, .webp
 - image save to filesystem or output
-- designed for PHp 7, but works also with PHp 5.6 (untestet)
+- designed for PHP 7, but works also with PHp 5.6 (untestet)
 
 ## Installation
 Croppy is actually only available trough [Composer](https://getcomposer.org) (recommended) or direct download.
