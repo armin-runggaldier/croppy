@@ -1,4 +1,5 @@
-# Croppy - PHP Framwork for image manipulation
+![Croppy](images/logo.svg)
+# Croppy - PHP Framework for image manipulation
 Version: 1.0
 
 ## Features
@@ -68,6 +69,7 @@ echo $croppy->getSourcePath();
 ## Planned features for further releases:
 - image type conversion
 - image ratio resize
+- image quality settings
 
 If you are missing a feature, please create a pull request :)
 
