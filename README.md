@@ -33,10 +33,8 @@ composer require croppy/croppy
 
 **Basic usage:**
 ```php
-use Croppy\Croppy;
-
-require 'path/to/src/Croppy.php';
-require 'path/to/src/Exception.php';
+use Croppy\Croppy\Croppy;
+use Croppy\Croppy\Exception;
 
 $croppy = new Croppy();
 $croppy->setSourcePath(__DIR__.'/path/to/image.jpg');
@@ -46,10 +44,8 @@ $croppy->save(__DIR__.'/path/to/destination.jpg');
 
 **Resize, crop and output:**
 ```php
-use Croppy\Croppy;
-
-require 'path/to/src/Croppy.php';
-require 'path/to/src/Exception.php';
+use Croppy\Croppy\Croppy;
+use Croppy\Croppy\Exception;
 
 $croppy = new Croppy();
 $croppy->setSourcePath(__DIR__.'/path/to/image.png');
