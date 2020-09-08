@@ -4,6 +4,7 @@ require '../src/Croppy.php';
 require '../src/Exception.php';
 
 use Croppy\Croppy\Croppy;
+use Croppy\Croppy\Exception;
 
 
 /* resize */
