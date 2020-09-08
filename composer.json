@@ -1,6 +1,6 @@
 {
   "name": "croppy/croppy",
-  "description": "description",
+  "description": "PHP Framework for image manipulation (.jpg, .jpeg, .png, .gif, .webp)",
   "minimum-stability": "alpha",
   "license": "MIT",
   "authors": [

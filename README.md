@@ -1,4 +1,5 @@
-# Croppy - PHP Framwork for image manipulation
+![Croppy](images/logo.svg)
+# Croppy - PHP Framework for image manipulation
 Version: 1.0
 
 ## Features
@@ -6,7 +7,7 @@ Version: 1.0
 - image crop
 - supported formats: .jpeg, .jpg, .png, .gif, .webp
 - image save to filesystem or output
-- designed for PHP 7, but works also with PHp 5.6 (untestet)
+- designed for PHP 7, but works also with PHP 5.6 (untestet)
 
 ## Installation
 Croppy is actually only available trough [Composer](https://getcomposer.org) (recommended) or direct download.
@@ -68,6 +69,7 @@ echo $croppy->getSourcePath();
 ## Planned features for further releases:
 - image type conversion
 - image ratio resize
+- image quality settings
 
 If you are missing a feature, please create a pull request :)
 
