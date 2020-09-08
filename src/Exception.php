@@ -1,6 +1,6 @@
 <?php
 
-namespace Croppy;
+namespace Croppy\Croppy;
 
 class Exception extends \Exception {
 

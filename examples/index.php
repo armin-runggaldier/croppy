@@ -3,7 +3,7 @@
 require '../src/Croppy.php';
 require '../src/Exception.php';
 
-use Croppy\Croppy;
+use Croppy\Croppy\Croppy;
 
 
 /* resize */

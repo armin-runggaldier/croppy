@@ -6,7 +6,7 @@
  * @github: https://github.com/Armamensch/croppy
  */
 
-namespace Croppy;
+namespace Croppy\Croppy;
 
 class Croppy {
 
