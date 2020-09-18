@@ -1,11 +1,12 @@
 ![Croppy](images/logo.svg)
 # Croppy - PHP Framework for image manipulation
-Version: 1.0
+Version: 1.1
 
 ## Features
 - image resize 
 - image crop
 - supported formats: .jpeg, .jpg, .png, .gif, .webp
+- image quality management
 - image save to filesystem or output
 - designed for PHP 7, but works also with PHP 5.6 (untestet)
 
@@ -14,7 +15,7 @@ Croppy is actually only available trough [Composer](https://getcomposer.org) (re
 
 To use [Composer](https://getcomposer.org), just add this line to your `composer.json` file:
 ```json
-"croppy/croppy": "~1.0"
+"croppy/croppy": "~1.1"
 ```
 
 and run the follow command:
@@ -41,6 +42,7 @@ require 'path/to/src/Exception.php';
 
 $croppy = new Croppy();
 $croppy->setSourcePath(__DIR__.'/path/to/image.jpg');
+$croppy->setJpegQuality(60);
 $croppy->resize(700, 700, false); // width, height, crop
 $croppy->save(__DIR__.'/path/to/destination.jpg');
 ```
@@ -55,6 +57,7 @@ require 'path/to/src/Exception.php';
 
 $croppy = new Croppy();
 $croppy->setSourcePath(__DIR__.'/path/to/image.png');
+$croppy->setPngCompression(6);
 // set crop position x, y 
 $croppy->setCropPosition($croppy::CROPCENTER, $croppy::CROPSTART); // $croppy::CROPSTART | $croppy::CROPCENTER | $croppy::CROPEND
 // set background color
@@ -71,7 +74,9 @@ echo $croppy->getSourcePath();
 ## Planned features for further releases:
 - image type conversion
 - image ratio resize
-- image quality settings
+
+## Changelog version 1.1:
+- image quality settings (jpeg, png and webp)
 
 If you are missing a feature, please create a pull request :)
 
