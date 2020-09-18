@@ -75,7 +75,7 @@ echo $croppy->getSourcePath();
 - image type conversion
 - image ratio resize
 
-## Changelog version 1.1:
+## Changelog version 1.1 (19.09.2020):
 - image quality settings (jpeg, png and webp)
 
 If you are missing a feature, please create a pull request :)
