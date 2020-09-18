@@ -28,6 +28,7 @@ class Croppy {
 	private $cropAlignmentY = self::CROPCENTER;
 	private $backgroundColor = array(255, 255, 255);
 	private $backgroundOpacity = 127; // percent
+	private $quality = 60; // percent
 
 	private $image = null;
 
@@ -48,6 +49,19 @@ class Croppy {
 
 		if($this->checkImageExtension() === false) {
 			throw new Exception(sprintf('Filetype %s is currently not supported. Supported types: %s!', $this->sourceType, implode(', ', $this->availableMimeTypes)));
+		}
+	}
+
+
+	/**
+	 * @param int $quality
+	 * @return void
+	 */
+	public function setQuality($quality) {
+		if(is_int($quality) === false) {
+			throw new Exception(sprintf('Given image quality %s is not a valid number!', $quality));
+		} else {
+			$this->quality = $quality;
 		}
 	}
 
@@ -244,12 +258,12 @@ class Croppy {
 
 		// IMAGETYPE_JPEG
 		if($outputType === IMAGETYPE_JPEG) {
-			$result = imagejpeg($this->image, $destinationPath);
+			$result = imagejpeg($this->image, $destinationPath, $this->quality);
 		}
 
 		// IMAGETYPE_PNG
 		else if($outputType === IMAGETYPE_PNG) {
-			$result = imagepng($this->image, $destinationPath);
+			$result = imagepng($this->image, $destinationPath); // todo: use percent of $this->quality for png
 		}
 
 		// IMAGETYPE_GIF
@@ -259,7 +273,7 @@ class Croppy {
 
 		// IMAGETYPE_WEBP
 		else if($outputType === IMAGETYPE_WEBP) {
-			$result = imagewebp($this->image, $destinationPath);
+			$result = imagewebp($this->image, $destinationPath, $this->quality);
 		}
 
 		else {
@@ -286,12 +300,12 @@ class Croppy {
 
 		// IMAGETYPE_JPEG
 		if($outputType === IMAGETYPE_JPEG) {
-			imagejpeg($this->image);
+			imagejpeg($this->image, null, $this->quality);
 		}
 
 		// IMAGETYPE_PNG
 		else if($outputType === IMAGETYPE_PNG) {
-			imagepng($this->image);
+			imagepng($this->image); // todo: use percent of $this->quality for png
 		}
 
 		// IMAGETYPE_GIF
@@ -301,7 +315,7 @@ class Croppy {
 
 		// IMAGETYPE_WEBP
 		else if($outputType === IMAGETYPE_WEBP) {
-			imagewebp($this->image);
+			imagewebp($this->image, null, $this->quality);
 		}
 
 		// Free up memory
