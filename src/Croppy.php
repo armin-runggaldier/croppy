@@ -28,7 +28,9 @@ class Croppy {
 	private $cropAlignmentY = self::CROPCENTER;
 	private $backgroundColor = array(255, 255, 255);
 	private $backgroundOpacity = 127; // percent
-	private $quality = 60; // percent
+	private $jpegQuality = 80; // percent
+	private $webpQuality = 80; // percent
+	private $pngCompression = 6; // 0-9
 
 	private $image = null;
 
@@ -57,11 +59,37 @@ class Croppy {
 	 * @param int $quality
 	 * @return void
 	 */
-	public function setQuality($quality) {
+	public function setJpegQuality($quality) {
 		if(is_int($quality) === false) {
 			throw new Exception(sprintf('Given image quality %s is not a valid number!', $quality));
 		} else {
-			$this->quality = $quality;
+			$this->jpegQuality = $quality;
+		}
+	}
+
+
+	/**
+	 * @param int $quality
+	 * @return void
+	 */
+	public function setWebpQuality($quality) {
+		if(is_int($quality) === false) {
+			throw new Exception(sprintf('Given image quality %s is not a valid number!', $quality));
+		} else {
+			$this->webpQuality = $quality;
+		}
+	}
+
+
+	/**
+	 * @param int $compression
+	 * @return void
+	 */
+	public function setPngCompression($compression) {
+		if(is_int($compression) === false) {
+			throw new Exception(sprintf('Given png quality %s is not a valid number!', $compression));
+		} else {
+			$this->pngCompression = $compression;
 		}
 	}
 
@@ -258,12 +286,12 @@ class Croppy {
 
 		// IMAGETYPE_JPEG
 		if($outputType === IMAGETYPE_JPEG) {
-			$result = imagejpeg($this->image, $destinationPath, $this->quality);
+			$result = imagejpeg($this->image, $destinationPath, $this->jpegQuality);
 		}
 
 		// IMAGETYPE_PNG
 		else if($outputType === IMAGETYPE_PNG) {
-			$result = imagepng($this->image, $destinationPath); // todo: use percent of $this->quality for png
+			$result = imagepng($this->image, $destinationPath, $this->pngCompression);
 		}
 
 		// IMAGETYPE_GIF
@@ -273,7 +301,7 @@ class Croppy {
 
 		// IMAGETYPE_WEBP
 		else if($outputType === IMAGETYPE_WEBP) {
-			$result = imagewebp($this->image, $destinationPath, $this->quality);
+			$result = imagewebp($this->image, $destinationPath, $this->webpQuality);
 		}
 
 		else {
@@ -300,12 +328,12 @@ class Croppy {
 
 		// IMAGETYPE_JPEG
 		if($outputType === IMAGETYPE_JPEG) {
-			imagejpeg($this->image, null, $this->quality);
+			imagejpeg($this->image, null, $this->jpegQuality);
 		}
 
 		// IMAGETYPE_PNG
 		else if($outputType === IMAGETYPE_PNG) {
-			imagepng($this->image); // todo: use percent of $this->quality for png
+			imagepng($this->image, null, $this->pngCompression);
 		}
 
 		// IMAGETYPE_GIF
@@ -315,7 +343,7 @@ class Croppy {
 
 		// IMAGETYPE_WEBP
 		else if($outputType === IMAGETYPE_WEBP) {
-			imagewebp($this->image, null, $this->quality);
+			imagewebp($this->image, null, $this->webpQuality);
 		}
 
 		// Free up memory
@@ -370,6 +398,7 @@ class Croppy {
 
 		return array($x, $y);
 	}
+
 
 }
 
