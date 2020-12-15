@@ -31,6 +31,7 @@ class Croppy {
 	private $jpegQuality = 80; // percent
 	private $webpQuality = 80; // percent
 	private $pngCompression = 6; // 0-9
+	private $upScaleAllowed = false; // prevent image upscale
 
 	private $image = null;
 
@@ -95,6 +96,15 @@ class Croppy {
 
 
 	/**
+	 * @param int $compression
+	 * @return void
+	 */
+	public function setUpScaleAllowed($upScaleAllowed) {
+		$this->upScaleAllowed = $upScaleAllowed;
+	}
+
+
+	/**
 	 * Return path of input source
 	 * @return string
 	 */
@@ -119,7 +129,7 @@ class Croppy {
 	 * @param float $destinationWidth
 	 * @param float $destinationHeight
 	 * @param bool $crop
-	 * @return void
+	 * @return boolean
 	 * @throws Exception
 	 */
 	public function resize($destinationWidth, $destinationHeight, $crop = false) {
@@ -128,6 +138,11 @@ class Croppy {
 		$sourceImageDimensions = getimagesize($this->sourcePath);
 		$sourceWidth = $sourceImageDimensions[0];
 		$sourceHeight = $sourceImageDimensions[1];
+
+		// check and prevent upscale
+		if($this->upScaleAllowed === false && ($destinationWidth > $sourceWidth || $destinationHeight > $sourceHeight)) {
+			return false;
+		}
 
 		// get new dimension size
 		list($width, $height) = $this->calculateDimensions($sourceWidth, $sourceHeight, $destinationWidth, $destinationHeight, $crop);
@@ -167,6 +182,8 @@ class Croppy {
 		}
 
 		$this->image = $newImage;
+
+		return true;
 	}
 
 
