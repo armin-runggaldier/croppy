@@ -2,8 +2,8 @@
 
 /*
  * @author: Armin Runggaldier
- * @version: 1.0
- * @github: https://github.com/Armamensch/croppy
+ * @version: 1.2
+ * @github: https://github.com/armin-runggaldier/croppy/
  */
 
 namespace Croppy\Croppy;
@@ -140,18 +140,28 @@ class Croppy {
 		$sourceHeight = $sourceImageDimensions[1];
 
 		// check and prevent upscale
-		if($this->upScaleAllowed === false && ($destinationWidth > $sourceWidth || $destinationHeight > $sourceHeight)) {
+		if($this->upScaleAllowed === false && $crop === false && ($destinationWidth > $sourceWidth || $destinationHeight > $sourceHeight)) {
 			return false;
 		}
 
 		// get new dimension size
 		list($width, $height) = $this->calculateDimensions($sourceWidth, $sourceHeight, $destinationWidth, $destinationHeight, $crop);
 
+		// allow crop upscale
+		if($this->upScaleAllowed === false && $crop === true) {
+			if($destinationWidth > $sourceWidth) {
+				$sourceWidth = $destinationWidth;
+			}
+			if($destinationHeight > $sourceHeight) {
+				$sourceHeight = $destinationHeight;
+			}
+		}
+
 		// get crop position
 		$x = 0;
 		$y = 0;
 		if($crop === true) {
-			list($x, $y) = $this->calcuateCroPosition($width, $height, $destinationWidth, $destinationHeight);
+			list($x, $y) = $this->calcuateCropPosition($width, $height, $destinationWidth, $destinationHeight);
 		}
 
 		$image = $this->createImageFromSource();
@@ -182,6 +192,45 @@ class Croppy {
 		}
 
 		$this->image = $newImage;
+
+		return true;
+	}
+
+
+	/**
+	 * extends image area by filling up with backgroundColor
+	 * @param float $destinationWidth
+	 * @param float $destinationHeight
+	 * @return boolean
+	 * @throws Exception
+	 */
+	public function extend($destinationWidth, $destinationHeight) {
+		$this->checkImageSource();
+
+		$sourceImageDimensions = getimagesize($this->sourcePath);
+		$sourceWidth = $sourceImageDimensions[0];
+		$sourceHeight = $sourceImageDimensions[1];
+
+		// get x, y positions
+		$x = 0;
+		$y = 0;
+		list($x, $y) = $this->calcuateCropPosition($destinationWidth, $destinationHeight, $sourceWidth, $sourceHeight);
+
+		$image = $this->createImageFromSource();
+		$newImage = imagecreatetruecolor($destinationWidth, $destinationHeight);
+
+		$color = imagecolorallocatealpha($newImage, $this->backgroundColor[0], $this->backgroundColor[1], $this->backgroundColor[2], $this->backgroundOpacity);
+
+		try {
+			imagefill($newImage, 0, 0, $color);
+			imagesavealpha($newImage, true);
+			imagealphablending($newImage, TRUE);
+			imagecopy($newImage, $image, $x, $y, 0, 0, $sourceWidth, $sourceHeight); // $destinationWidth, $destinationHeight,
+			$this->image = $newImage;
+		} catch (Exception $ex) {
+			throw new Exception('Image could not be processed! Error Message: '.$ex->getMessage());
+			return false;
+		}
 
 		return true;
 	}
@@ -290,8 +339,30 @@ class Croppy {
 	 */
 	public function save($destinationPath, $convertType = false) {
 		$outputType = $this->sourceType;
-		if($convertType !== false && in_array($convertType, $this->availableTypes)) {
-			$outputType = $convertType;
+		if($convertType !== false) { //  && in_array($convertType, $this->availableTypes)
+			$fileExt = explode('.', $destinationPath);
+			$fileExt = array_pop($fileExt);
+			if($fileExt === 'jpg' || $fileExt === 'jpeg') {
+				$outputType = IMAGETYPE_JPEG;
+			} else if($fileExt === 'png') {
+				$outputType = IMAGETYPE_PNG;
+			} else if($fileExt === 'gif') {
+				$outputType = IMAGETYPE_GIF;
+			} else if($fileExt === 'webp') {
+				$outputType = IMAGETYPE_WEBP;
+			}
+
+			// convert image
+			imagealphablending($this->image, TRUE);
+			if($this->sourceType !== $outputType) {
+				$image = $this->image;
+				$bg = imagecreatetruecolor(imagesx($image), imagesy($image));
+				imagefill($bg, 0, 0, imagecolorallocate($bg, 255, 255, 255));
+				imagealphablending($bg, TRUE);
+				imagecopy($bg, $image, 0, 0, 0, 0, imagesx($image), imagesy($image));
+				$this->image = $bg;
+			}
+			$this->sourceType = $outputType;
 		}
 
 		$dirname = dirname($destinationPath);
@@ -388,7 +459,7 @@ class Croppy {
 	}
 
 
-	private function calcuateCroPosition($sourceWidth, $sourceHeight, $width, $height) {
+	private function calcuateCropPosition($sourceWidth, $sourceHeight, $width, $height) {
 		$x = 0;
 		$y = 0;
 		$overflowX = $sourceWidth - $width;
@@ -416,7 +487,4 @@ class Croppy {
 		return array($x, $y);
 	}
 
-
 }
-
-
