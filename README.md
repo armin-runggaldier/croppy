@@ -117,7 +117,7 @@ Streams the image direct to output and set `Content-Type` header.
 ## Planned features for further releases:
 - image ratio resize
 
-## Changelog version 1.2 (30.12.2020):
+## Changelog version 1.2 (31.12.2020):
 - image upscale definiton
 - extend image area and fill with background color
 - image type conversion (for example .png to .jpg)
