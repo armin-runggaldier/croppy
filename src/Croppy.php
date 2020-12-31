@@ -13,7 +13,7 @@ class Croppy {
 	public const CROPSTART = 'start';
 	public const CROPCENTER = 'center';
 	public const CROPEND = 'end';
-	public const OPACITYMAX = 127;
+	private const OPACITYMAX = 127;
 
 	private $availableTypes = [IMAGETYPE_JPEG, IMAGETYPE_PNG, IMAGETYPE_GIF, IMAGETYPE_BMP, IMAGETYPE_WEBP];
 	private $availableMimeTypes = [
@@ -96,7 +96,7 @@ class Croppy {
 
 
 	/**
-	 * @param int $compression
+	 * @param bool $upScaleAllowed
 	 * @return void
 	 */
 	public function setUpScaleAllowed($upScaleAllowed) {
