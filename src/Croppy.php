@@ -149,11 +149,14 @@ class Croppy {
 
 		// allow crop upscale
 		if($this->upScaleAllowed === false && $crop === true) {
-			if($destinationWidth > $sourceWidth) {
+			/*if($destinationWidth > $sourceWidth) {
 				$sourceWidth = $destinationWidth;
 			}
 			if($destinationHeight > $sourceHeight) {
 				$sourceHeight = $destinationHeight;
+			}*/
+			if($destinationWidth > $sourceWidth || $destinationHeight > $sourceHeight) {
+				return false;
 			}
 		}
 
