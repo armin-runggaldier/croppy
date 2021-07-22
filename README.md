@@ -1,3 +1,5 @@
+[![Github All Releases](https://img.shields.io/github/downloads/armin-runggaldier/croppy/total.svg)]()
+
 ![Croppy](images/logo.svg)
 # Croppy - PHP Framework for image manipulation
 Version: 1.2  
