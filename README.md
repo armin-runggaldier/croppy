@@ -116,10 +116,10 @@ Streams the image direct to output and set `Content-Type` header.
 
 ## Planned features for further releases:
 - image ratio resize
-- minor bugfixes for `$upScaleAllowed` property
 
 ## Changelog version 1.3 (15.11.2022):
 - Support for PHP Version 8
+- minor bugfixes for `$upScaleAllowed` property
 
 ## Changelog version 1.2 (31.12.2020):
 - image upscale definiton
