@@ -1,7 +1,7 @@
 ![Croppy](images/logo.svg)
 # Croppy - PHP Framework for image manipulation
-Version: 1.2  
-PHP Version: php >= 7.1
+Version: 1.3  
+PHP Version: php >= 8.0
 
 ## Features
 - image resize 
@@ -116,6 +116,10 @@ Streams the image direct to output and set `Content-Type` header.
 
 ## Planned features for further releases:
 - image ratio resize
+- minor bugfixes for `$upScaleAllowed` property
+
+## Changelog version 1.3 (15.11.2022):
+- Support for PHP Version 8
 
 ## Changelog version 1.2 (31.12.2020):
 - image upscale definiton

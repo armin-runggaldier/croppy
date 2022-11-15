@@ -2,7 +2,7 @@
 
 /*
  * @author: Armin Runggaldier
- * @version: 1.2
+ * @version: 1.3
  * @github: https://github.com/armin-runggaldier/croppy/
  */
 
@@ -15,25 +15,25 @@ class Croppy {
 	public const CROPEND = 'end';
 	private const OPACITYMAX = 127;
 
-	private $availableTypes = [IMAGETYPE_JPEG, IMAGETYPE_PNG, IMAGETYPE_GIF, IMAGETYPE_BMP, IMAGETYPE_WEBP];
-	private $availableMimeTypes = [
+	private array $availableTypes = [IMAGETYPE_JPEG, IMAGETYPE_PNG, IMAGETYPE_GIF, IMAGETYPE_BMP, IMAGETYPE_WEBP];
+	private array $availableMimeTypes = [
 		IMAGETYPE_JPEG => 'image/jpeg',
 		IMAGETYPE_PNG => 'image/png',
 		IMAGETYPE_GIF => 'image/gif',
 		IMAGETYPE_WEBP => 'image/webp',
 	];
 	private $sourceType = null;
-	private $sourcePath = null;
-	private $cropAlignmentX = self::CROPCENTER;
-	private $cropAlignmentY = self::CROPCENTER;
-	private $backgroundColor = array(255, 255, 255);
-	private $backgroundOpacity = 127; // percent
-	private $jpegQuality = 80; // percent
-	private $webpQuality = 80; // percent
-	private $pngCompression = 6; // 0-9
-	private $upScaleAllowed = false; // prevent image upscale
+	private ?string $sourcePath = null;
+	private string $cropAlignmentX = self::CROPCENTER;
+	private string $cropAlignmentY = self::CROPCENTER;
+	private array $backgroundColor = array(255, 255, 255);
+	private int $backgroundOpacity = 127; // percent
+	private int $jpegQuality = 80; // percent
+	private int $webpQuality = 80; // percent
+	private int $pngCompression = 6; // 0-9
+	private bool $upScaleAllowed = false; // prevent image upscale
 
-	private $image = null;
+	private \GdImage|null|false $image = null;
 
 	public function __construct() {
 	}
@@ -44,7 +44,7 @@ class Croppy {
 	 * @param string $sourcePath
 	 * @throws Exception
 	 */
-	public function setSourcePath($sourcePath) : void {
+	public function setSourcePath(string $sourcePath) : void {
 		$this->sourcePath = $sourcePath;
 		$this->checkImageSource();
 
@@ -60,7 +60,7 @@ class Croppy {
 	 * @param int $quality
 	 * @return void
 	 */
-	public function setJpegQuality($quality) {
+	public function setJpegQuality(int $quality) {
 		if(is_int($quality) === false) {
 			throw new Exception(sprintf('Given image quality %s is not a valid number!', $quality));
 		} else {
@@ -73,7 +73,7 @@ class Croppy {
 	 * @param int $quality
 	 * @return void
 	 */
-	public function setWebpQuality($quality) {
+	public function setWebpQuality(int $quality) {
 		if(is_int($quality) === false) {
 			throw new Exception(sprintf('Given image quality %s is not a valid number!', $quality));
 		} else {
@@ -86,7 +86,7 @@ class Croppy {
 	 * @param int $compression
 	 * @return void
 	 */
-	public function setPngCompression($compression) {
+	public function setPngCompression(int $compression) {
 		if(is_int($compression) === false) {
 			throw new Exception(sprintf('Given png quality %s is not a valid number!', $compression));
 		} else {
@@ -99,7 +99,7 @@ class Croppy {
 	 * @param bool $upScaleAllowed
 	 * @return void
 	 */
-	public function setUpScaleAllowed($upScaleAllowed) {
+	public function setUpScaleAllowed(bool $upScaleAllowed) {
 		$this->upScaleAllowed = $upScaleAllowed;
 	}
 
@@ -118,7 +118,7 @@ class Croppy {
 	 * @param string $cropAlignmentY Croppy::CROPSTART | Croppy::CROPCENTER | Croppy::CROPEND
 	 * @return void
 	 */
-	public function setCropPosition($cropAlignmentX, $cropAlignmentY) {
+	public function setCropPosition(string $cropAlignmentX, string $cropAlignmentY) {
 		$this->cropAlignmentX = $cropAlignmentX;
 		$this->cropAlignmentY = $cropAlignmentY;
 	}
@@ -132,7 +132,7 @@ class Croppy {
 	 * @return boolean
 	 * @throws Exception
 	 */
-	public function resize($destinationWidth, $destinationHeight, $crop = false) {
+	public function resize(float $destinationWidth, float $destinationHeight, bool $crop = false) {
 		$this->checkImageSource();
 
 		$sourceImageDimensions = getimagesize($this->sourcePath);
@@ -141,6 +141,7 @@ class Croppy {
 
 		// check and prevent upscale
 		if($this->upScaleAllowed === false && $crop === false && ($destinationWidth > $sourceWidth || $destinationHeight > $sourceHeight)) {
+			$this->image = imagecreatefromstring(file_get_contents($this->sourcePath));
 			return false;
 		}
 
@@ -176,14 +177,14 @@ class Croppy {
 
 		// image resample
 		if($crop === true) {
-			$resizedImage = imagecreatetruecolor($width, $height);
+			$resizedImage = imagecreatetruecolor(intval($width), intval($height));
 
 			$resizedImage = $this->setImageBackground($resizedImage);
 			$color = imagecolorallocatealpha($resizedImage, $this->backgroundColor[0], $this->backgroundColor[1], $this->backgroundColor[2], $this->backgroundOpacity);
 			imagefill($resizedImage, 0, 0, $color);
 
-			imagecopyresampled($resizedImage, $image, 0, 0, 0, 0, $width, $height, $sourceWidth, $sourceHeight);
-			imagecopyresampled($newImage, $resizedImage, 0, 0, $x, $y, $width, $height, $width, $height);
+			imagecopyresampled($resizedImage, $image, 0, 0, 0, 0, intval($width), intval($height), $sourceWidth, $sourceHeight);
+			imagecopyresampled($newImage, $resizedImage, 0, 0, intval($x), intval($y), intval($width), intval($height), intval($width), intval($height));
 		} else {
 			$color = imagecolorallocatealpha($newImage, $this->backgroundColor[0], $this->backgroundColor[1], $this->backgroundColor[2], $this->backgroundOpacity);
 			imagefill($newImage, 0, 0, $color);
@@ -204,7 +205,7 @@ class Croppy {
 	 * @return boolean
 	 * @throws Exception
 	 */
-	public function extend($destinationWidth, $destinationHeight) {
+	public function extend(float $destinationWidth, float $destinationHeight) {
 		$this->checkImageSource();
 
 		$sourceImageDimensions = getimagesize($this->sourcePath);
@@ -302,13 +303,13 @@ class Croppy {
 	 * @return void
 	 * @throws Exception
 	 */
-	public function setBackground($backgroundColorR, $backgroundColorB, $backgroundColorG, $opacity = 100) {
+	public function setBackground(int $backgroundColorR, int $backgroundColorB, int $backgroundColorG, int $opacity = 100) {
 		$this->backgroundColor = array($backgroundColorR, $backgroundColorB, $backgroundColorG);
 		$this->backgroundOpacity = $this->calculateOpacity($opacity);
 	}
 
 
-	private function calculateOpacity($opacity) {
+	private function calculateOpacity(int $opacity) {
 		if($opacity < 0 || $opacity > 100) {
 			throw new Exception(sprintf('Opacity must be between 0 - 100! %s give in!', $opacity));
 		}
@@ -321,7 +322,7 @@ class Croppy {
 	}
 
 
-	private function setImageBackground($image) {
+	private function setImageBackground(\GdImage $image) {
 		imagesavealpha($image, true);
 		$transparentImage = imagecolorallocatealpha($image, 0, 0, 0, 127);
 		imagefill($image, 0, 0, $transparentImage);
@@ -337,7 +338,7 @@ class Croppy {
 	 * @return bool
 	 * @throws Exception
 	 */
-	public function save($destinationPath, $convertType = false) {
+	public function save(string $destinationPath, bool $convertType = false) {
 		$outputType = $this->sourceType;
 		if($convertType !== false) { //  && in_array($convertType, $this->availableTypes)
 			$fileExt = explode('.', $destinationPath);
@@ -366,7 +367,9 @@ class Croppy {
 		}
 
 		$dirname = dirname($destinationPath);
-		if(is_dir($dirname) === false) {
+		if($this->image === null) {
+			throw new Exception(sprintf('Image not set or is invalid!', $dirname));
+		} else if(is_dir($dirname) === false) {
 			throw new Exception(sprintf('Directory %s does not exists!', $dirname));
 		} else if(is_writable($dirname) === false) {
 			throw new Exception(sprintf('Directory %s is not writable!', $dirname));
@@ -405,7 +408,7 @@ class Croppy {
 	 * @param bool $convertType
 	 * @return void
 	 */
-	public function output($convertType = false) {
+	public function output(bool $convertType = false) {
 		$outputType = $this->sourceType;
 		if($convertType !== false && in_array($convertType, $this->availableTypes)) {
 			$outputType = $convertType;
@@ -439,7 +442,7 @@ class Croppy {
 	}
 
 
-	private function calculateDimensions($sourceWidth, $sourceHeight, $width, $height, $crop) {
+	private function calculateDimensions(float $sourceWidth, float $sourceHeight, float $width, float $height, bool $crop) {
 		$newHeight = $sourceHeight * $width / $sourceWidth;
 		$newWidth = $width;
 
@@ -459,7 +462,7 @@ class Croppy {
 	}
 
 
-	private function calcuateCropPosition($sourceWidth, $sourceHeight, $width, $height) {
+	private function calcuateCropPosition(float $sourceWidth, float $sourceHeight, float $width, float $height) {
 		$x = 0;
 		$y = 0;
 		$overflowX = $sourceWidth - $width;
