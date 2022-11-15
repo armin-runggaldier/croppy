@@ -11,7 +11,7 @@ PHP Version: php >= 8.0
 - supported formats: .jpeg, .jpg, .png, .gif, .webp
 - image quality management
 - image save to filesystem or output
-- designed for PHP >= 7.1
+- designed for PHP >= 8.1
 
 ## Installation
 Croppy is actually available trough [Composer](https://getcomposer.org) (recommended) or direct download.
